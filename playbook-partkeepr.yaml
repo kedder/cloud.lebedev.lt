@@ -1,0 +1,52 @@
+- hosts: all
+  tasks:
+    - name: Install packages
+      become: yes
+      apt:
+        pkg:
+          - python3-docker
+
+    - name: Create Network
+      become: yes
+      docker_network:
+        name: partkeepr_nw
+
+    - name: Run Database Container
+      become: yes
+      docker_container:
+        name: 'partkeepr_db'
+        image: 'mariadb:10.3'
+        recreate: true
+        restart_policy: unless-stopped
+        volumes:
+          - partkeepr-mysql-data:/var/lib/mysql
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD=yes
+          MYSQL_DATABASE=partkeepr
+          MYSQL_USER=partkeepr
+          MYSQL_PASSWORD=partkeepr
+        networks_cli_compatible: yes
+        networks:
+          - name: "partkeepr_nw"
+
+    - name: Run partkeepr
+      become: yes
+      docker_container:
+        name: 'partkeepr_app'
+        image: 'mhubig/partkeepr:latest'
+        recreate: true
+        restart_policy: unless-stopped
+        published_ports:
+          - "20080:80"
+        volumes:
+          - partkeepr-data:/var/www/html/data
+          - partkeepr-web:/var/www/html/web
+        env:
+          PARTKEEPR_DATABASE_HOST=partkeepr_db
+          PARTKEEPR_DATABASE_NAME=partkeepr
+          PARTKEEPR_DATABASE_PORT=3306
+          PARTKEEPR_DATABASE_USER=partkeepr
+          PARTKEEPR_DATABASE_PASS=partkeepr
+        networks_cli_compatible: yes
+        networks:
+          - name: "partkeepr_nw"

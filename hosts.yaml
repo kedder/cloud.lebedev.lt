@@ -1,0 +1,11 @@
+all:
+  hosts:
+    virtual:
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_host: 192.168.121.10
+      ansible_user: vagrant
+      ansible_ssh_private_key_file: virtual/.vagrant/machines/default/libvirt/private_key
+    cloud:
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_host: 176.223.140.230
+      ansible_user: root

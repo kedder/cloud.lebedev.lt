@@ -1,0 +1,28 @@
+- hosts: virtual
+  tasks:
+    - name: Set hostname
+      become: yes
+      hostname:
+        name: virtual.lebedev.lt
+
+- hosts: cloud
+  tasks:
+    - name: Set hostname
+      become: yes
+      hostname:
+        name: cloud.lebedev.lt
+
+- hosts: all
+  tasks:
+    - name: Upgrade packages
+      become: yes
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install basic packages
+      become: yes
+      apt:
+        package:
+          vim
+
