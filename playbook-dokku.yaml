@@ -8,3 +8,5 @@
     dokku_plugins:
       - name: postgres
         url: https://github.com/dokku/dokku-postgres.git
+      - name: letsencrypt
+        url: https://github.com/dokku/dokku-letsencrypt.git
