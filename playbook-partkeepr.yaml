@@ -1,18 +1,16 @@
 - hosts: all
+  become: yes
   tasks:
     - name: Install packages
-      become: yes
       apt:
         pkg:
           - python3-docker
 
     - name: Create Network
-      become: yes
       docker_network:
         name: partkeepr_nw
 
     - name: Run Database Container
-      become: yes
       docker_container:
         name: 'partkeepr_db'
         image: 'mariadb:10.3'
@@ -30,14 +28,13 @@
           - name: "partkeepr_nw"
 
     - name: Run partkeepr
-      become: yes
       docker_container:
         name: 'partkeepr_app'
         image: 'mhubig/partkeepr:latest'
         recreate: true
         restart_policy: unless-stopped
         published_ports:
-          - "20080:80"
+          - "127.0.0.1:20080:80"
         volumes:
           - partkeepr-data:/var/www/html/data
           - partkeepr-web:/var/www/html/web
@@ -50,3 +47,29 @@
         networks_cli_compatible: yes
         networks:
           - name: "partkeepr_nw"
+
+    - name: Copy the nginx config file and restart nginx
+      copy:
+        src: partkeepr/nginx.cfg
+        dest: /etc/nginx/sites-available/partkeepr.cfg
+
+    - name: Enable partkeepr nginx site
+      file:
+        src: /etc/nginx/sites-available/partkeepr.cfg
+        dest: /etc/nginx/sites-enabled/partkeepr.cfg
+        state: link
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Install backup script
+      copy:
+        src: partkeepr/backup.sh
+        dest: /etc/cron.daily/backup-partkeepr
+
+    - name: Enable backup script
+      file:
+        path: /etc/cron.daily/backup-partkeepr
+        mode: a+x
