@@ -3,6 +3,8 @@
   roles:
     - dokku_bot.ansible_dokku
   vars:
+    dokku_version: 0.19.8
+    dokku_vhost_enable: true
     dokku_skip_key_file: true
     dokku_hostname: lebedev.lt
     dokku_plugins:
