@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Create soaring-coupons dokku app
+      script: soaring-coupons/install.sh
+      args:
+        creates: /home/dokku/soaring-coupons
+
+    - name: Install backup script
+      copy:
+        src: soaring-coupons/backup.sh
+        dest: /etc/cron.daily/backup-soaring-coupons
+
+    - name: Enable backup script
+      file:
+        path: /etc/cron.daily/backup-soaring-coupons
+        mode: a+x
