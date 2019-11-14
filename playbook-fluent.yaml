@@ -1,0 +1,49 @@
+- hosts: all
+  become: yes
+  vars_files:
+    - vars/fluent_vault.yaml
+    - vars/fluent.yaml
+  tasks:
+    - name: Install packages
+      apt:
+        pkg:
+          - python3-docker
+
+    - name: Create fluentd Network
+      docker_network:
+        name: fluentd_nw
+
+    - name: Upload the image source directory
+      synchronize:
+        src: fluentd
+        dest: ./docker
+        delete: yes
+      register: sync_result
+
+    - name: Build an image and push it to a private repo
+      docker_image:
+        build:
+          path: ./docker/fluentd
+          pull: yes
+        name: cloud.lebedev.lt/fluentd
+        source: build
+        force_source: yes
+      when: sync_result.changed
+
+    - name: Run fluentd
+      docker_container:
+        name: 'fluentd'
+        image: 'cloud.lebedev.lt/fluentd'
+        recreate: true
+        restart_policy: unless-stopped
+        published_ports:
+          - 127.0.0.1:24224:24224
+        volumes:
+          - /var/log:/fluentd/log
+        networks_cli_compatible: yes
+        networks:
+          - name: "fluentd_nw"
+        env:
+          FLUENTD_HOSTNAME={{ inventory_hostname }}
+          FLUENTD_LOGZIO_URL=https://listener-eu.logz.io:8071?token={{ fluentd_logzio_token }}&type=cloud
+          FLUENTD_LOGGLY_URL=https://logs-01.loggly.com/inputs/{{ fluentd_loggly_token }}/tag/cloud
