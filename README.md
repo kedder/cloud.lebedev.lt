@@ -63,6 +63,18 @@ values.
 
 Dokku hosts various apps and databases.
 
+* List apps:
+
+    ```
+    $ dokku apps:list
+    ```
+
+* Connect to running app container:
+
+    ```sh
+    $ dokku enter soaring-coupons
+    ```
+
 ### Fluentd
 
 Fluentd collects and forwards logs to aggregators. Currently these are used:
@@ -70,3 +82,12 @@ Fluentd collects and forwards logs to aggregators. Currently these are used:
 * https://app.logz.io/ - free, but wants you to revisit the site from time to time, otherwise deletes your account (ugh!)
 * https://kedder.loggly.com/
 
+### Openvario
+
+Static file hosting for openvario opkg repo. Files are hosted from `/home/openvario/www` dir and available through http://openvario.lebedev.lt/.
+
+## Other related services
+
+* https://app.freshping.io/ - ping monitoring
+* https://www.vhost.lt/ - domain hosting and DNS management
+* https://klientams.iv.lt/ - virtual server hosting

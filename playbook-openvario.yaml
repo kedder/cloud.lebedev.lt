@@ -1,0 +1,28 @@
+# Static file hosting for openvario files
+- hosts: all
+  become: yes
+  tasks:
+
+    - name: Create openvario public dir
+      file:
+        path: /home/openvario/www
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Copy the nginx config file and restart nginx
+      copy:
+        src: openvario/nginx.cfg
+        dest: /etc/nginx/sites-available/openvario.cfg
+
+    - name: Enable openvario nginx site
+      file:
+        src: /etc/nginx/sites-available/openvario.cfg
+        dest: /etc/nginx/sites-enabled/openvario.cfg
+        state: link
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
