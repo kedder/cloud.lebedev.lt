@@ -15,7 +15,7 @@ after I revisit the project after a year.
 ### Starting and accessing virtual server
 
 ```sh
-$ cd vagrant
+$ cd virtual
 $ vagrant up
 $ vagrant ssh
 virtual:~$ sudo docker ps
