@@ -45,5 +45,4 @@
           - name: "fluentd_nw"
         env:
           FLUENTD_HOSTNAME={{ inventory_hostname }}
-          FLUENTD_LOGZIO_URL={{ fluentd_loggzio_host }}?token={{ fluentd_logzio_token }}&type=cloud
           FLUENTD_LOGGLY_URL=https://logs-01.loggly.com/inputs/{{ fluentd_loggly_token }}/tag/cloud

@@ -79,7 +79,6 @@ Dokku hosts various apps and databases.
 
 Fluentd collects and forwards logs to aggregators. Currently these are used:
 
-* https://app.logz.io/ - free, but wants you to revisit the site from time to time, otherwise deletes your account (ugh!)
 * https://kedder.loggly.com/
 
 ### Openvario

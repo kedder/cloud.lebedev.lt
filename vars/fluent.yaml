@@ -1,3 +1,1 @@
-fluentd_loggzio_host: "https://listener.logz.io:8071"
-fluentd_logzio_token: "{{ vault_fluentd_logzio_token }}"
 fluentd_loggly_token: "{{ vault_fluentd_loggly_token }}"
