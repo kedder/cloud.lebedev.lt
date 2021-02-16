@@ -51,13 +51,7 @@
     - name: Copy the nginx config file and restart nginx
       copy:
         src: partkeepr/nginx.cfg
-        dest: /etc/nginx/sites-available/partkeepr.cfg
-
-    - name: Enable partkeepr nginx site
-      file:
-        src: /etc/nginx/sites-available/partkeepr.cfg
-        dest: /etc/nginx/sites-enabled/partkeepr.cfg
-        state: link
+        dest: /etc/nginx/conf.d/partkeepr.conf
 
     - name: Restart nginx
       service:

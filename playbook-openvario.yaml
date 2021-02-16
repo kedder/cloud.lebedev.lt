@@ -14,13 +14,7 @@
     - name: Copy the nginx config file and restart nginx
       copy:
         src: openvario/nginx.cfg
-        dest: /etc/nginx/sites-available/openvario.cfg
-
-    - name: Enable openvario nginx site
-      file:
-        src: /etc/nginx/sites-available/openvario.cfg
-        dest: /etc/nginx/sites-enabled/openvario.cfg
-        state: link
+        dest: /etc/nginx/conf.d/openvario.conf
 
     - name: Restart nginx
       service:
