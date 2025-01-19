@@ -1,0 +1,53 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install packages
+      apt:
+        pkg:
+          - python3-docker
+
+    - name: Grocy data dir
+      ansible.builtin.file:
+        path: /var/lib/grocy
+        state: directory
+
+
+    - name: Run grocy
+      docker_container:
+        name: 'grocy'
+        image: 'lscr.io/linuxserver/grocy:latest'
+        recreate: true
+        restart_policy: unless-stopped
+        published_ports:
+          - "127.0.0.1:21080:80"
+        volumes:
+          - /var/lib/grocy:/config
+        env:
+          PUID=2000
+          PGID=2000
+          TZ=Europe/Vilnius
+          GROCY_FEATURE_FLAG_RECIPES=false
+          GROCY_FEATURE_FLAG_CHORES=false
+          GROCY_FEATURE_FLAG_TASKS=false
+          GROCY_FEATURE_FLAG_BATTERIES=false
+          GROCY_FEATURE_FLAG_EQUIPMENT=false
+
+    - name: Copy the nginx config file and restart nginx
+      copy:
+        src: grocy/nginx.cfg
+        dest: /etc/nginx/conf.d/grocy.conf
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Install backup script
+      copy:
+        src: grocy/backup.sh
+        dest: /etc/cron.daily/backup-grocy
+
+    - name: Enable backup script
+      file:
+        path: /etc/cron.daily/backup-grocy
+        mode: a+x
