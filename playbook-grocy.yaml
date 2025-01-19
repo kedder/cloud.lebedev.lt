@@ -30,7 +30,6 @@
           GROCY_FEATURE_FLAG_CHORES=false
           GROCY_FEATURE_FLAG_TASKS=false
           GROCY_FEATURE_FLAG_BATTERIES=false
-          GROCY_FEATURE_FLAG_EQUIPMENT=false
 
     - name: Copy the nginx config file and restart nginx
       copy:
