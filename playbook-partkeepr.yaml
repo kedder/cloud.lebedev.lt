@@ -51,7 +51,22 @@
     - name: Copy the nginx config file and restart nginx
       copy:
         src: partkeepr/nginx.cfg
-        dest: /etc/nginx/conf.d/partkeepr.conf
+        dest: /etc/nginx/conf.d/partkeepr.conf.bootstrap
+
+    - name: Install bootstrap config
+      command: >
+        cp /etc/nginx/conf.d/partkeepr.conf.bootstrap /etc/nginx/conf.d/partkeepr.conf
+      args:
+        creates: /etc/nginx/conf.d/partkeepr.conf
+
+    - name: Generate SSL certificate
+      command: >
+        /opt/certbot/bin/certbot --nginx --non-interactive
+        --agree-tos --email andrey@lebedev.lt
+        -d partkeepr.lebedev.lt 
+      args:
+        creates: /etc/letsencrypt/live/partkeepr.lebedev.lt/fullchain.pem
+
 
     - name: Restart nginx
       service:
