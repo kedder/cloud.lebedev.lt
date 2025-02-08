@@ -30,11 +30,26 @@
           GROCY_FEATURE_FLAG_CHORES=false
           GROCY_FEATURE_FLAG_TASKS=false
           GROCY_FEATURE_FLAG_BATTERIES=false
+          GROCY_CURRENCY=EUR
 
     - name: Copy the nginx config file and restart nginx
       copy:
         src: grocy/nginx.cfg
-        dest: /etc/nginx/conf.d/grocy.conf
+        dest: /etc/nginx/conf.d/grocy.conf.bootstrap
+
+    - name: Install bootstrap config
+      command: >
+        cp /etc/nginx/conf.d/grocy.conf.bootstrap /etc/nginx/conf.d/grocy.conf
+      args:
+        creates: /etc/nginx/conf.d/grocy.conf
+
+    - name: Generate SSL certificate
+      command: >
+        /opt/certbot/bin/certbot --nginx --non-interactive
+        --agree-tos --email andrey@lebedev.lt
+        -d grocy.lebedev.lt 
+      args:
+        creates: /etc/letsencrypt/live/grocy.lebedev.lt/fullchain.pem
 
     - name: Restart nginx
       service:

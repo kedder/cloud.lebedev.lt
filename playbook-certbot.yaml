@@ -1,0 +1,42 @@
+- name: Install Certbot via pip and configure SSL for Nginx
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Install required system packages
+      apt:
+        name:
+          - python3-pip
+          - python3-venv
+          - nginx
+        state: present
+        update_cache: yes
+
+    - name: Create Certbot virtual environment
+      file:
+        path: /opt/certbot
+        state: directory
+
+    - name: Install Certbot in a virtual environment
+      shell: |
+        python3 -m venv /opt/certbot
+        /opt/certbot/bin/pip install --upgrade pip
+        /opt/certbot/bin/pip install certbot certbot-nginx
+      args:
+        creates: /opt/certbot/bin/certbot
+
+    # - name: Generate SSL certificate for domains
+    #   command: >
+    #     /opt/certbot/bin/certbot --nginx --non-interactive
+    #     --agree-tos --email your-email@example.com
+    #     -d yourdomain.com -d www.yourdomain.com
+    #   args:
+    #     creates: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+
+    - name: Set up automatic renewal via cron
+      cron:
+        name: "Certbot auto-renewal"
+        job: "/opt/certbot/bin/certbot renew --quiet"
+        minute: "0"
+        hour: "3"
+        state: present
